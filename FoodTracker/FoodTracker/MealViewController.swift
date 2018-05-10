@@ -8,11 +8,10 @@
 
 import UIKit
 
-class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     //MARK: Properties
     @IBOutlet weak var nameTextField: UITextField!
-    @IBOutlet weak var mealNameLabel: UILabel!
     @IBOutlet weak var mealImageView: UIImageView!
     @IBOutlet weak var ratingControl: RatingController!
     
@@ -32,7 +31,7 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        mealNameLabel.text = textField.text
+       
     }
     //MARK: UIImagePickerControllerDelegate
     
@@ -68,9 +67,5 @@ class ViewController: UIViewController, UITextFieldDelegate, UIImagePickerContro
 //        present(imagePickerController, animated: true, completion: nil)
 //    }
 
-    @IBAction func setDefaultLabelText(_ sender: UIButton) {
-        mealNameLabel.text = "Default Text"
-    }
-    
 }
 

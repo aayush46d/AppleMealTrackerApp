@@ -19,7 +19,19 @@ class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
     @IBAction func cancel(_ sender: UIBarButtonItem) {
+        let isAddMode = presentingViewController is UINavigationController
+        
+        if isAddMode {
         dismiss(animated: true, completion: nil)
+        }
+        else if let owningNavigationController = navigationController {
+            owningNavigationController.popViewController(animated: true)
+        }
+        else{
+            fatalError("Error in popping cancelling")
+        }
+        
+        
     }
     // new meal to add to the table
     var meal: Meal?
@@ -29,6 +41,13 @@ class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         
         // Handle the text field’s user input through delegate callbacks.
         nameTextField.delegate = self
+        
+        if let meal = meal {
+            navigationItem.title = meal.name
+            mealImageView.image = meal.photo
+            ratingControl.rating = meal.rating
+            
+        }
         updateSaveButtonStatus()
     }
     

@@ -16,11 +16,15 @@ class MealTableViewController: UITableViewController {
     
     
     override func viewDidLoad() {
-        loadSampleData()
-        
         navigationItem.leftBarButtonItem = editButtonItem
         
-        // Uncomment the following line to preserve selection between presentations
+        if let loadedMeals = loadMeals() {
+            meals += loadedMeals
+        }
+        else{
+        loadSampleData()
+        }
+            // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
@@ -74,6 +78,7 @@ class MealTableViewController: UITableViewController {
         if editingStyle == .delete {
             // Delete the row from the data source
             meals.remove(at: indexPath.row)
+            saveData()
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -103,7 +108,7 @@ class MealTableViewController: UITableViewController {
         super.prepare(for: segue, sender: sender)
         
         switch segue.identifier ?? "" {
-        case "AddItem":
+        case "Add Item":
             os_log("Items added", log: OSLog.default, type: .debug)
         case "ShowDetail":
             guard let mealDetailViewController = segue.destination as? MealViewController
@@ -119,10 +124,17 @@ class MealTableViewController: UITableViewController {
             let selectedMeal = meals[indexPath.row]
             mealDetailViewController.meal = selectedMeal
         default:
+            print("segue :"+segue.identifier!)
             fatalError("segue identifier error")
         }
         
         
+    }
+    
+    func tempFunc () {
+        let temp = TempViewController(nibName: "TempViewController", bundle: nil)
+        present(temp, animated: true, completion: nil)
+        self.navigationController?.pushViewController(temp, animated: true)
     }
     
     // MARK: Actions
@@ -141,6 +153,7 @@ class MealTableViewController: UITableViewController {
                 meals.append(meal)
                 tableView.insertRows(at: [newIndexPath], with: UITableViewRowAnimation.left)
             }
+            saveData()
         }
         
     }
@@ -164,6 +177,19 @@ class MealTableViewController: UITableViewController {
         }
         meals += [meal1, meal2, meal3]
         
+    }
+    
+    private func saveData(){
+    let saveSuccess = NSKeyedArchiver.archiveRootObject(meals, toFile: Meal.ArchieveURL.path)
+        if saveSuccess {
+            os_log("Data Saved!!", log: OSLog.default, type: .debug)
+        }else{
+            os_log("Error is saving data!", log: OSLog.default, type: .debug)
+        }
+    }
+    
+    private func loadMeals() -> [Meal]?{
+    return NSKeyedUnarchiver.unarchiveObject(withFile: Meal.ArchieveURL.path) as? [Meal]
     }
     
 }
